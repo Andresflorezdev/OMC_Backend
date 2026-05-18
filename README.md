@@ -1,131 +1,175 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# OMC Backend - Prueba Tecnica
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST construida con NestJS para gestionar leads de marketing, consultar estadisticas y generar un resumen ejecutivo usando IA.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tecnologias usadas
 
-## Description
+- `NestJS`: estructura modular, validaciones y controladores claros para una API REST.
+- `TypeScript`: tipado estatico y mejor mantenibilidad.
+- `MongoDB + Mongoose`: persistencia rapida con schema definido y timestamps.
+- `JWT`: autenticacion para proteger los endpoints de leads.
+- `Swagger`: documentacion interactiva en `/docs`.
+- `Mock LLM service`: resumen simulado con una arquitectura lista para conectar un proveedor real despues.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Requisitos
 
-## Project setup
+- `Node.js 22+`
+- `pnpm`
+- `MongoDB` corriendo local o remoto
+
+## Instalacion
 
 ```bash
-$ pnpm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-
-**Documentación (español)**
-
-- **Instalación**: Ejecuta:
-
-```
 pnpm install
 ```
 
-- **Variables de entorno**: copia `.env.example` a `.env` y ajusta valores:
-  - `MONGODB_URI` — URI de conexión a MongoDB.
-  - `JWT_SECRET` — secreto para firmar tokens JWT.
-  - `GOOGLE_API_KEY` — (opcional) clave para usar Google AI Studio (Gemini). Si no se provee, el endpoint AI devolverá un resumen mock.
-  - El modelo de Gemini queda fijo en el código (`models/gemini-1.5-flash`), así que no hace falta configurarlo en `.env`.
+## Variables de entorno
 
-- **Semillas**: para insertar datos de ejemplo (al menos 10 leads):
+Crea un archivo `.env` a partir de `.env.example`.
 
+```env
+PORT=3000
+NODE_ENV=development
+MONGODB_URI=mongodb://localhost:27017/lead_flow
+JWT_SECRET=change-me
+JWT_EXPIRES_IN=1d
+AUTH_ADMIN_EMAIL=admin@lead-flow.com
+AUTH_ADMIN_PASSWORD=change-me
 ```
-pnpm run db:seed
-```
 
-- **Correr la app**:
+## Ejecutar el proyecto
 
-```
+```bash
 pnpm run start:dev
 ```
 
-- **Endpoint AI**: `POST /leads/ai/summary` — genera un resumen ejecutivo en español sobre un conjunto de leads.
-  - Body (JSON) opcional: `fuente` (instagram|facebook|landing_page|referido|otro), `fechaInicio`, `fechaFin`, `limit` (por defecto 100).
-  - Respuesta: `{ summary: string, mock: boolean, count: number }`.
-  - Si `OPENAI_API_KEY` está presente, la petición utilizará OpenAI; si no, se devuelve un resumen mock generado localmente.
+La documentacion Swagger queda disponible en:
 
-- **Notas**: La autenticación por JWT está habilitada para rutas de `leads`. Usa `/auth/login` para obtener `accessToken` con las credenciales en `.env`.
+```text
+http://localhost:3000/docs
+```
+
+## Seed
+
+Para cargar 10 leads de ejemplo:
+
+```bash
+pnpm run db:seed
+```
+
+## Autenticacion
+
+La autenticacion es un plus implementado en esta prueba. Las rutas de `leads` estan protegidas con JWT.
+
+Primero obten un token:
+
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@lead-flow.com",
+  "password": "change-me"
+}
+```
+
+Respuesta esperada:
+
+```json
+{
+  "accessToken": "jwt..."
+}
+```
+
+Luego usa ese token como:
+
+```text
+Authorization: Bearer TU_TOKEN
+```
+
+## Endpoints principales
+
+### Crear lead
+
+```http
+POST /leads
+Authorization: Bearer TU_TOKEN
+Content-Type: application/json
+
+{
+  "nombre": "Juan Perez",
+  "email": "juan@example.com",
+  "telefono": "+57 300 123 4567",
+  "fuente": "instagram",
+  "producto_interes": "Curso de ventas",
+  "presupuesto": 250
+}
+```
+
+### Listar leads
+
+```http
+GET /leads?page=1&limit=10&fuente=instagram&fechaInicio=2026-05-01T00:00:00.000Z&fechaFin=2026-05-18T23:59:59.999Z
+Authorization: Bearer TU_TOKEN
+```
+
+### Obtener lead por ID
+
+```http
+GET /leads/:id
+Authorization: Bearer TU_TOKEN
+```
+
+### Actualizar lead
+
+```http
+PATCH /leads/:id
+Authorization: Bearer TU_TOKEN
+Content-Type: application/json
+
+{
+  "producto_interes": "Mentoria premium",
+  "presupuesto": 500
+}
+```
+
+### Eliminar lead
+
+```http
+DELETE /leads/:id
+Authorization: Bearer TU_TOKEN
+```
+
+### Estadisticas
+
+```http
+GET /leads/stats
+Authorization: Bearer TU_TOKEN
+```
+
+### Resumen con IA
+
+```http
+POST /leads/ai/summary
+Authorization: Bearer TU_TOKEN
+Content-Type: application/json
+
+{
+  "fuente": "facebook",
+  "fechaInicio": "2026-05-01T00:00:00.000Z",
+  "fechaFin": "2026-05-18T23:59:59.999Z",
+  "limit": 100
+}
+```
+
+El endpoint `/leads/ai/summary` devuelve un resumen mock documentado. La arquitectura del servicio ya queda separada para conectar despues un proveedor real como OpenAI, Anthropic o Gemini sin cambiar el controlador.
+
+## Scripts utiles
+
+```bash
+pnpm run start:dev
+pnpm run build
+pnpm run db:seed
+pnpm run test
+pnpm run test:e2e
+```

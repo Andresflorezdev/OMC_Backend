@@ -6,23 +6,23 @@ const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/lead_flow';
 
 const seedLeads = [
   {
-    name: 'Laura Gómez',
+    name: 'Laura Gomez',
     email: 'laura.gomez@example.com',
     phone: '+57 300 111 2233',
     source: LeadSource.Instagram,
-    productInterest: 'Mentoría de ventas',
+    productInterest: 'Mentoria de ventas',
     budget: 250,
   },
   {
-    name: 'Andrés Ruiz',
+    name: 'Andres Ruiz',
     email: 'andres.ruiz@example.com',
     phone: '+57 300 222 3344',
     source: LeadSource.Facebook,
-    productInterest: 'Curso de automatización',
+    productInterest: 'Curso de automatizacion',
     budget: 180,
   },
   {
-    name: 'María Torres',
+    name: 'Maria Torres',
     email: 'maria.torres@example.com',
     phone: '+57 300 333 4455',
     source: LeadSource.LandingPage,
@@ -30,15 +30,15 @@ const seedLeads = [
     budget: 500,
   },
   {
-    name: 'Carlos Pérez',
+    name: 'Carlos Perez',
     email: 'carlos.perez@example.com',
     phone: '+57 300 444 5566',
     source: LeadSource.Referido,
-    productInterest: 'Diagnóstico estratégico',
+    productInterest: 'Diagnostico estrategico',
     budget: 120,
   },
   {
-    name: 'Sofía Herrera',
+    name: 'Sofia Herrera',
     email: 'sofia.herrera@example.com',
     phone: '+57 300 555 6677',
     source: LeadSource.Otro,
@@ -50,7 +50,7 @@ const seedLeads = [
     email: 'diego.castro@example.com',
     phone: '+57 300 666 7788',
     source: LeadSource.Instagram,
-    productInterest: 'Acompañamiento mensual',
+    productInterest: 'Acompanamiento mensual',
     budget: 320,
   },
   {
@@ -70,11 +70,11 @@ const seedLeads = [
     budget: 280,
   },
   {
-    name: 'Valentina Mejía',
+    name: 'Valentina Mejia',
     email: 'valentina.mejia@example.com',
     phone: '+57 300 999 0011',
     source: LeadSource.Referido,
-    productInterest: 'Consultoría 1:1',
+    productInterest: 'Consultoria 1:1',
     budget: 600,
   },
   {
@@ -82,7 +82,7 @@ const seedLeads = [
     email: 'mateo.arias@example.com',
     phone: '+57 300 101 1122',
     source: LeadSource.Otro,
-    productInterest: 'Sesión de cierre',
+    productInterest: 'Sesion de cierre',
     budget: 75,
   },
 ];
