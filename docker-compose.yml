@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    container_name: omc-backend-api
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongo:27017/lead_flow
+      JWT_SECRET: change-me
+      JWT_EXPIRES_IN: 1d
+      AUTH_ADMIN_EMAIL: admin@lead-flow.com
+      AUTH_ADMIN_PASSWORD: change-me
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7
+    container_name: omc-backend-mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
