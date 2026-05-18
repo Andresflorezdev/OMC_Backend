@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, FilterQuery } from 'mongoose';
-import { Lead, LeadDocument } from './schemas/lead.schema';
+import { FilterQuery, Model } from 'mongoose';
 import { LeadSource } from './lead-source.enum';
+import { Lead, LeadDocument } from './schemas/lead.schema';
 
 @Injectable()
 export class LeadsRepository {
@@ -34,12 +34,12 @@ export class LeadsRepository {
       const createdAtFilter: { $gte?: Date; $lte?: Date } = {};
       if (fechaInicio) createdAtFilter.$gte = fechaInicio;
       if (fechaFin) createdAtFilter.$lte = fechaFin;
-      baseQuery['createdAt'] = createdAtFilter;
+      baseQuery['created_at'] = createdAtFilter;
     }
 
     return this.leadModel
       .find(baseQuery as FilterQuery<LeadDocument>)
-      .sort({ createdAt: -1 })
+      .sort({ created_at: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .lean<Lead[]>()
@@ -95,7 +95,7 @@ export class LeadsRepository {
     return this.leadModel
       .countDocuments({
         deletedAt: null,
-        createdAt: { $gte: sevenDaysAgo },
+        created_at: { $gte: sevenDaysAgo },
       })
       .exec();
   }

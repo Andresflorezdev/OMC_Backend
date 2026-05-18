@@ -13,6 +13,18 @@ import { Lead } from './schemas/lead.schema';
 
 type LeadLike = Lead &
   Partial<{ _id: string | { toString(): string }; id?: string }>;
+type MongoDuplicateKeyError = { code: string | number };
+
+function isMongoDuplicateKeyError(
+  error: unknown,
+): error is MongoDuplicateKeyError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (typeof error.code === 'string' || typeof error.code === 'number')
+  );
+}
 
 @Injectable()
 export class LeadsService {
@@ -34,9 +46,11 @@ export class LeadsService {
 
       return this.toResponse(lead);
     } catch (error) {
-      const code = (error as { code?: string | number })?.code;
-      if (code === 11000 || code === '11000') {
-        throw new ConflictException('El email ya esta registrado');
+      if (isMongoDuplicateKeyError(error)) {
+        const code = error.code;
+        if (code === 11000 || code === '11000') {
+          throw new ConflictException('El email ya esta registrado');
+        }
       }
 
       throw error;
@@ -90,9 +104,11 @@ export class LeadsService {
 
       return this.toResponse(lead!);
     } catch (error) {
-      const code = (error as { code?: string | number })?.code;
-      if (code === 11000 || code === '11000') {
-        throw new ConflictException('El email ya esta registrado');
+      if (isMongoDuplicateKeyError(error)) {
+        const code = error.code;
+        if (code === 11000 || code === '11000') {
+          throw new ConflictException('El email ya esta registrado');
+        }
       }
 
       throw error;
@@ -157,11 +173,7 @@ export class LeadsService {
       'Resumen solicitado desde /leads/ai/summary',
     );
 
-    return {
-      summary: result.summary,
-      mock: result.isMock,
-      count: leads.length,
-    };
+    return result.summary;
   }
 
   private async ensureExists(id: string) {
@@ -177,8 +189,8 @@ export class LeadsService {
     if (!id && lead._id) {
       id = typeof lead._id === 'string' ? lead._id : lead._id.toString();
     }
-    const createdAt = lead.createdAt ?? null;
-    const updatedAt = lead.updatedAt ?? null;
+    const createdAt = lead.created_at ?? null;
+    const updatedAt = lead.updated_at ?? null;
     return {
       id,
       nombre: lead.name,
@@ -187,8 +199,8 @@ export class LeadsService {
       fuente: lead.source,
       producto_interes: lead.productInterest ?? null,
       presupuesto: lead.budget ?? null,
-      createdAt,
-      updatedAt,
+      created_at: createdAt,
+      updated_at: updatedAt,
       deletedAt: lead.deletedAt ?? null,
     };
   }
