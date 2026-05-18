@@ -15,6 +15,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { AiSummaryDto } from './dto/ai-summary.dto';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -66,6 +67,7 @@ export class LeadsController {
   }
 
   @Post('ai/summary')
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @ApiOkResponse({ description: 'Resumen ejecutivo generado por LLM' })
   aiSummary(@Body() body: AiSummaryDto) {
     return this.leadsService.generateAiSummary(body);
