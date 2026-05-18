@@ -96,3 +96,36 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+**Documentación (español)**
+
+- **Instalación**: Ejecuta:
+
+```
+pnpm install
+```
+
+- **Variables de entorno**: copia `.env.example` a `.env` y ajusta valores:
+  - `MONGODB_URI` — URI de conexión a MongoDB.
+  - `JWT_SECRET` — secreto para firmar tokens JWT.
+  - `GOOGLE_API_KEY` — (opcional) clave para usar Google AI Studio (Gemini). Si no se provee, el endpoint AI devolverá un resumen mock.
+  - El modelo de Gemini queda fijo en el código (`models/gemini-1.5-flash`), así que no hace falta configurarlo en `.env`.
+
+- **Semillas**: para insertar datos de ejemplo (al menos 10 leads):
+
+```
+pnpm run db:seed
+```
+
+- **Correr la app**:
+
+```
+pnpm run start:dev
+```
+
+- **Endpoint AI**: `POST /leads/ai/summary` — genera un resumen ejecutivo en español sobre un conjunto de leads.
+  - Body (JSON) opcional: `fuente` (instagram|facebook|landing_page|referido|otro), `fechaInicio`, `fechaFin`, `limit` (por defecto 100).
+  - Respuesta: `{ summary: string, mock: boolean, count: number }`.
+  - Si `OPENAI_API_KEY` está presente, la petición utilizará OpenAI; si no, se devuelve un resumen mock generado localmente.
+
+- **Notas**: La autenticación por JWT está habilitada para rutas de `leads`. Usa `/auth/login` para obtener `accessToken` con las credenciales en `.env`.
