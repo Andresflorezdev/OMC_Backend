@@ -9,6 +9,8 @@ API REST construida con NestJS para gestionar leads de marketing, consultar esta
 - `MongoDB + Mongoose`: persistencia rapida con schema definido y timestamps.
 - `JWT`: autenticacion para proteger los endpoints de leads.
 - `Swagger`: documentacion interactiva en `/docs`.
+- `Rate limiting`: proteccion basica por IP con limites globales y reglas mas estrictas en login y resumen de IA.
+- `Tests unitarios`: cobertura para auth, leads y servicio mock de IA.
 - `Mock LLM service`: resumen simulado con una arquitectura lista para conectar un proveedor real despues.
 
 ## Requisitos
@@ -49,6 +51,20 @@ La documentacion Swagger queda disponible en:
 http://localhost:3000/docs
 ```
 
+## Docker
+
+Puedes levantar la API y MongoDB con:
+
+```bash
+docker compose up --build
+```
+
+La API quedara disponible en:
+
+```text
+http://localhost:3000
+```
+
 ## Seed
 
 Para cargar 10 leads de ejemplo:
@@ -86,6 +102,14 @@ Luego usa ese token como:
 ```text
 Authorization: Bearer TU_TOKEN
 ```
+
+## Rate limiting
+
+La API incluye rate limiting como plus:
+
+- limite global de `60` peticiones por minuto por IP
+- `/auth/login`: `5` peticiones por minuto
+- `/leads/ai/summary`: `10` peticiones por minuto
 
 ## Endpoints principales
 
@@ -172,4 +196,18 @@ pnpm run build
 pnpm run db:seed
 pnpm run test
 pnpm run test:e2e
+```
+
+## Tests
+
+Se agregaron pruebas unitarias para:
+
+- autenticacion
+- logica principal de leads
+- servicio mock de resumen con IA
+
+Para ejecutar las pruebas unitarias:
+
+```bash
+pnpm run test -- --runInBand
 ```

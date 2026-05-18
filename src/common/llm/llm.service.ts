@@ -60,18 +60,21 @@ export class LlmService {
       )}.\nProductos mas demandados: ${topProducts.join(', ')}.\nPresupuesto promedio: $${avgBudget}.\nRecomendaciones: 1) Priorizar contactos de ${topSource}; 2) Segmentar por interes de producto; 3) Revisar leads con presupuesto mayor a la media.`;
   }
 
-  async summarizeLeads(leads: Array<Record<string, unknown>>, notes?: string) {
+  summarizeLeads(leads: Array<Record<string, unknown>>, notes?: string) {
     if (!Array.isArray(leads) || leads.length === 0) {
-      return { summary: 'No hay leads para resumir.', isMock: true };
+      return Promise.resolve({
+        summary: 'No hay leads para resumir.',
+        isMock: true,
+      });
     }
 
     const prompt = this.buildPrompt(leads, notes);
 
-    return {
+    return Promise.resolve({
       summary: this.buildMockSummary(prompt.leads),
       isMock: true,
       provider: 'mock',
       note: 'La arquitectura queda preparada para reemplazar este mock por un proveedor LLM real.',
-    };
+    });
   }
 }
