@@ -16,11 +16,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { AiSummaryDto } from './dto/ai-summary.dto';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { ListLeadsQueryDto } from './dto/list-leads.query.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadsService } from './leads.service';
-import { AiSummaryDto } from './dto/ai-summary.dto';
 
 @ApiTags('leads')
 @ApiBearerAuth()
@@ -42,7 +42,7 @@ export class LeadsController {
   }
 
   @Get('stats')
-  @ApiOkResponse({ description: 'Estadísticas de leads' })
+  @ApiOkResponse({ description: 'Estadisticas de leads' })
   stats() {
     return this.leadsService.stats();
   }

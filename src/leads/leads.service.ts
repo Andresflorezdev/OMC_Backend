@@ -3,16 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { LlmService } from '../common/llm/llm.service';
+import { CreateLeadDto } from './dto/create-lead.dto';
+import { ListLeadsQueryDto } from './dto/list-leads.query.dto';
+import { UpdateLeadDto } from './dto/update-lead.dto';
+import { LeadSource } from './lead-source.enum';
+import { LeadsRepository } from './leads.repository';
 import { Lead } from './schemas/lead.schema';
 
 type LeadLike = Lead &
   Partial<{ _id: string | { toString(): string }; id?: string }>;
-import { CreateLeadDto } from './dto/create-lead.dto';
-import { ListLeadsQueryDto } from './dto/list-leads.query.dto';
-import { UpdateLeadDto } from './dto/update-lead.dto';
-import { LeadsRepository } from './leads.repository';
-import { LeadSource } from './lead-source.enum';
-import { LlmService } from '../common/llm/llm.service';
 
 @Injectable()
 export class LeadsService {
@@ -28,7 +28,7 @@ export class LeadsService {
         email: createLeadDto.email,
         phone: createLeadDto.telefono,
         source: createLeadDto.fuente,
-        productInterest: createLeadDto.productoInteres,
+        productInterest: createLeadDto.producto_interes,
         budget: createLeadDto.presupuesto,
       });
 
@@ -36,7 +36,7 @@ export class LeadsService {
     } catch (error) {
       const code = (error as { code?: string | number })?.code;
       if (code === 11000 || code === '11000') {
-        throw new ConflictException('El email ya est� registrado');
+        throw new ConflictException('El email ya esta registrado');
       }
 
       throw error;
@@ -80,8 +80,8 @@ export class LeadsService {
           ? { phone: updateLeadDto.telefono }
           : {}),
         ...(updateLeadDto.fuente ? { source: updateLeadDto.fuente } : {}),
-        ...(updateLeadDto.productoInteres !== undefined
-          ? { productInterest: updateLeadDto.productoInteres }
+        ...(updateLeadDto.producto_interes !== undefined
+          ? { productInterest: updateLeadDto.producto_interes }
           : {}),
         ...(updateLeadDto.presupuesto !== undefined
           ? { budget: updateLeadDto.presupuesto }
@@ -92,7 +92,7 @@ export class LeadsService {
     } catch (error) {
       const code = (error as { code?: string | number })?.code;
       if (code === 11000 || code === '11000') {
-        throw new ConflictException('El email ya est� registrado');
+        throw new ConflictException('El email ya esta registrado');
       }
 
       throw error;
@@ -185,7 +185,7 @@ export class LeadsService {
       email: lead.email,
       telefono: lead.phone ?? null,
       fuente: lead.source,
-      productoInteres: lead.productInterest ?? null,
+      producto_interes: lead.productInterest ?? null,
       presupuesto: lead.budget ?? null,
       createdAt,
       updatedAt,

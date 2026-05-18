@@ -12,19 +12,19 @@ export class Lead {
   @Prop({ required: true, unique: true })
   email!: string;
 
-  @Prop({ required: true })
-  phone!: string;
+  @Prop({ default: null })
+  phone!: string | null;
 
   @Prop({ required: true, enum: Object.values(LeadSource) })
   source!: LeadSource;
 
-  @Prop({ required: true })
-  productInterest!: string;
+  @Prop({ default: null })
+  productInterest!: string | null;
 
-  @Prop({ type: Number, required: true })
-  budget!: number;
+  @Prop({ type: Number, default: null })
+  budget!: number | null;
 
-  @Prop({ required: true, default: null })
+  @Prop({ type: Date, default: null })
   deletedAt!: Date | null;
 
   @Prop()
