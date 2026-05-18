@@ -1,0 +1,195 @@
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Lead } from './schemas/lead.schema';
+
+type LeadLike = Lead &
+  Partial<{ _id: string | { toString(): string }; id?: string }>;
+import { CreateLeadDto } from './dto/create-lead.dto';
+import { ListLeadsQueryDto } from './dto/list-leads.query.dto';
+import { UpdateLeadDto } from './dto/update-lead.dto';
+import { LeadsRepository } from './leads.repository';
+import { LeadSource } from './lead-source.enum';
+import { LlmService } from '../common/llm/llm.service';
+
+@Injectable()
+export class LeadsService {
+  constructor(
+    private readonly leadsRepository: LeadsRepository,
+    private readonly llmService: LlmService,
+  ) {}
+
+  async create(createLeadDto: CreateLeadDto) {
+    try {
+      const lead = await this.leadsRepository.create({
+        name: createLeadDto.nombre,
+        email: createLeadDto.email,
+        phone: createLeadDto.telefono,
+        source: createLeadDto.fuente,
+        productInterest: createLeadDto.productoInteres,
+        budget: createLeadDto.presupuesto,
+      });
+
+      return this.toResponse(lead);
+    } catch (error) {
+      const code = (error as { code?: string | number })?.code;
+      if (code === 11000 || code === '11000') {
+        throw new ConflictException('El email ya est� registrado');
+      }
+
+      throw error;
+    }
+  }
+
+  async findAll(query: ListLeadsQueryDto) {
+    const leads = await this.leadsRepository.findMany({
+      page: query.page ?? 1,
+      limit: query.limit ?? 10,
+      fuente: query.fuente,
+      fechaInicio: query.fechaInicio ? new Date(query.fechaInicio) : undefined,
+      fechaFin: query.fechaFin ? new Date(query.fechaFin) : undefined,
+    });
+
+    return {
+      data: leads.map((lead) => this.toResponse(lead)),
+      page: query.page ?? 1,
+      limit: query.limit ?? 10,
+    };
+  }
+
+  async findOne(id: string) {
+    const lead = await this.leadsRepository.findById(id);
+
+    if (!lead) {
+      throw new NotFoundException('Lead no encontrado');
+    }
+
+    return this.toResponse(lead);
+  }
+
+  async update(id: string, updateLeadDto: UpdateLeadDto) {
+    await this.ensureExists(id);
+
+    try {
+      const lead = await this.leadsRepository.update(id, {
+        ...(updateLeadDto.nombre ? { name: updateLeadDto.nombre } : {}),
+        ...(updateLeadDto.email ? { email: updateLeadDto.email } : {}),
+        ...(updateLeadDto.telefono !== undefined
+          ? { phone: updateLeadDto.telefono }
+          : {}),
+        ...(updateLeadDto.fuente ? { source: updateLeadDto.fuente } : {}),
+        ...(updateLeadDto.productoInteres !== undefined
+          ? { productInterest: updateLeadDto.productoInteres }
+          : {}),
+        ...(updateLeadDto.presupuesto !== undefined
+          ? { budget: updateLeadDto.presupuesto }
+          : {}),
+      });
+
+      return this.toResponse(lead!);
+    } catch (error) {
+      const code = (error as { code?: string | number })?.code;
+      if (code === 11000 || code === '11000') {
+        throw new ConflictException('El email ya est� registrado');
+      }
+
+      throw error;
+    }
+  }
+
+  async remove(id: string) {
+    await this.ensureExists(id);
+
+    const lead = await this.leadsRepository.softDelete(id);
+
+    return this.toResponse(lead!);
+  }
+
+  async stats() {
+    const [totalLeads, leadsBySource, averageBudget, leadsLast7Days] =
+      await Promise.all([
+        this.leadsRepository.totalActive(),
+        this.leadsRepository.countBySource(),
+        this.leadsRepository.averageBudget(),
+        this.leadsRepository.countLast7Days(),
+      ]);
+
+    return {
+      totalLeads,
+      leadsBySource: leadsBySource.reduce(
+        (accumulator, item) => ({
+          ...accumulator,
+          [item.source]: item._count.source,
+        }),
+        {
+          instagram: 0,
+          facebook: 0,
+          landing_page: 0,
+          referido: 0,
+          otro: 0,
+        },
+      ),
+      averageBudget: averageBudget._avg.budget ?? 0,
+      leadsLast7Days,
+    };
+  }
+
+  async generateAiSummary(filter: {
+    fuente?: LeadSource;
+    fechaInicio?: string;
+    fechaFin?: string;
+    limit?: number;
+  }) {
+    const leads = await this.leadsRepository.findMany({
+      page: 1,
+      limit: filter.limit ?? 100,
+      fuente: filter.fuente,
+      fechaInicio: filter.fechaInicio
+        ? new Date(filter.fechaInicio)
+        : undefined,
+      fechaFin: filter.fechaFin ? new Date(filter.fechaFin) : undefined,
+    });
+
+    const result = await this.llmService.summarizeLeads(
+      leads as unknown as Array<Record<string, unknown>>,
+      'Resumen solicitado desde /leads/ai/summary',
+    );
+
+    return {
+      summary: result.summary,
+      mock: result.isMock,
+      count: leads.length,
+    };
+  }
+
+  private async ensureExists(id: string) {
+    const lead = await this.leadsRepository.findById(id);
+
+    if (!lead) {
+      throw new NotFoundException('Lead no encontrado');
+    }
+  }
+
+  private toResponse(lead: LeadLike) {
+    let id: string | undefined = lead.id;
+    if (!id && lead._id) {
+      id = typeof lead._id === 'string' ? lead._id : lead._id.toString();
+    }
+    const createdAt = lead.createdAt ?? null;
+    const updatedAt = lead.updatedAt ?? null;
+    return {
+      id,
+      nombre: lead.name,
+      email: lead.email,
+      telefono: lead.phone ?? null,
+      fuente: lead.source,
+      productoInteres: lead.productInterest ?? null,
+      presupuesto: lead.budget ?? null,
+      createdAt,
+      updatedAt,
+      deletedAt: lead.deletedAt ?? null,
+    };
+  }
+}
