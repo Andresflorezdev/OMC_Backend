@@ -64,8 +64,6 @@ export class LeadsService {
       page: query.page ?? 1,
       limit: query.limit ?? 10,
       fuente: query.fuente,
-      fechaInicio: query.fechaInicio ? new Date(query.fechaInicio) : undefined,
-      fechaFin: query.fechaFin ? new Date(query.fechaFin) : undefined,
     });
 
     return {
