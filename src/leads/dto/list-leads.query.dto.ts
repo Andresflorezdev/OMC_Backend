@@ -1,6 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  Max,
+  Min,
+} from 'class-validator';
 import { LeadSource } from '../lead-source.enum';
 
 export class ListLeadsQueryDto {
@@ -23,4 +30,14 @@ export class ListLeadsQueryDto {
   @IsOptional()
   @IsEnum(LeadSource)
   fuente?: LeadSource;
+
+  @ApiPropertyOptional({ example: '' })
+  @IsOptional()
+  @IsDateString()
+  fechaInicio?: string;
+
+  @ApiPropertyOptional({ example: '' })
+  @IsOptional()
+  @IsDateString()
+  fechaFin?: string;
 }

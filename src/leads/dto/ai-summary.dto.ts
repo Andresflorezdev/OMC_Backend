@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsDateString, IsEnum, IsOptional } from 'class-validator';
 import { LeadSource } from '../lead-source.enum';
 
 export class AiSummaryDto {
@@ -8,6 +8,16 @@ export class AiSummaryDto {
   @IsOptional()
   @IsEnum(LeadSource)
   fuente?: LeadSource;
+
+  @ApiPropertyOptional({ example: '' })
+  @IsOptional()
+  @IsDateString()
+  fechaInicio?: string;
+
+  @ApiPropertyOptional({ example: '' })
+  @IsOptional()
+  @IsDateString()
+  fechaFin?: string;
 
   @ApiPropertyOptional({ example: 100 })
   @IsOptional()
