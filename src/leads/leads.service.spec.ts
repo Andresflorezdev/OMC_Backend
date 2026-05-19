@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { LlmService } from '../common/llm/llm.service';
 import { LeadSource } from './lead-source.enum';
 import { LeadsRepository } from './leads.repository';
@@ -9,17 +9,19 @@ describe('LeadsService', () => {
   let repository: jest.Mocked<LeadsRepository>;
   let llmService: jest.Mocked<LlmService>;
   let createMock: jest.Mock;
+  let findByIdMock: jest.Mock;
   let findManyMock: jest.Mock;
   let summarizeLeadsMock: jest.Mock;
 
   beforeEach(() => {
     createMock = jest.fn();
+    findByIdMock = jest.fn();
     findManyMock = jest.fn();
     summarizeLeadsMock = jest.fn();
 
     repository = {
       create: createMock,
-      findById: jest.fn(),
+      findById: findByIdMock,
       findMany: findManyMock,
       update: jest.fn(),
       softDelete: jest.fn(),
@@ -85,6 +87,13 @@ describe('LeadsService', () => {
         fuente: LeadSource.Instagram,
       }),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('rejects invalid ids before querying the repository', async () => {
+    await expect(service.findOne('111')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    expect(findByIdMock).not.toHaveBeenCalled();
   });
 
   it('returns only the summary text for the AI endpoint', async () => {

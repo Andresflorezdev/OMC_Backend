@@ -1,15 +1,17 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { LlmService } from '../common/llm/llm.service';
+import { isValidObjectId } from 'mongoose';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { ListLeadsQueryDto } from './dto/list-leads.query.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
-import { LeadSource } from './lead-source.enum';
 import { LeadsRepository } from './leads.repository';
 import { Lead } from './schemas/lead.schema';
+import { AiSummaryDto } from './dto/ai-summary.dto';
 
 type LeadLike = Lead &
   Partial<{ _id: string | { toString(): string }; id?: string }>;
@@ -74,6 +76,7 @@ export class LeadsService {
   }
 
   async findOne(id: string) {
+    this.ensureValidId(id);
     const lead = await this.leadsRepository.findById(id);
 
     if (!lead) {
@@ -84,6 +87,7 @@ export class LeadsService {
   }
 
   async update(id: string, updateLeadDto: UpdateLeadDto) {
+    this.ensureValidId(id);
     await this.ensureExists(id);
 
     try {
@@ -116,6 +120,7 @@ export class LeadsService {
   }
 
   async remove(id: string) {
+    this.ensureValidId(id);
     await this.ensureExists(id);
 
     const lead = await this.leadsRepository.softDelete(id);
@@ -152,20 +157,12 @@ export class LeadsService {
     };
   }
 
-  async generateAiSummary(filter: {
-    fuente?: LeadSource;
-    fechaInicio?: string;
-    fechaFin?: string;
-    limit?: number;
-  }) {
+  async generateAiSummary(filter: AiSummaryDto) {
+    void filter;
+
     const leads = await this.leadsRepository.findMany({
       page: 1,
-      limit: filter.limit ?? 100,
-      fuente: filter.fuente,
-      fechaInicio: filter.fechaInicio
-        ? new Date(filter.fechaInicio)
-        : undefined,
-      fechaFin: filter.fechaFin ? new Date(filter.fechaFin) : undefined,
+      limit: 10000,
     });
 
     const result = await this.llmService.summarizeLeads(
@@ -181,6 +178,12 @@ export class LeadsService {
 
     if (!lead) {
       throw new NotFoundException('Lead no encontrado');
+    }
+  }
+
+  private ensureValidId(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('id incorrecto');
     }
   }
 
